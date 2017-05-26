@@ -11,11 +11,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//        setContentView(new RadarView(this));
-//        setContentView(new BaguaView(this));
-        RotateArrowView rotateArrowView=new RotateArrowView(this);
-        setContentView(rotateArrowView);
-        rotateArrowView.startAnimation();
+        setContentView(R.layout.activity_main);
+//        BaguaView baguaView=new BaguaView(this);
+//        setContentView(baguaView);
+//        RotateArrowView rotateArrowView=new RotateArrowView(this);
+//        setContentView(rotateArrowView);
+//        rotateArrowView.startAnimation();
     }
 }
