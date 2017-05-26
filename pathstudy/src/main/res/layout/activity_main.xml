@@ -12,6 +12,7 @@
     <com.customui.sxshi.pathstudy.view.RadarView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         />
 
     <com.customui.sxshi.pathstudy.view.BaguaView

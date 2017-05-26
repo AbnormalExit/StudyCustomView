@@ -27,7 +27,7 @@ public class WaveView extends View {
     private Paint mWavePaint;
     private Path mPath;
 
-    private final int WAVE_RADIUS = 1000;//波浪直径
+    private final int WAVE_RADIUS = 500;//波浪直径
     private Bitmap mBoatBitmap;
 
     private float faction = 1;
@@ -70,6 +70,8 @@ public class WaveView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mPath.reset();
+        Path mBoatPath=new Path();
+        mBoatPath.reset();
         int orginY = 800;//初始化波浪高度
         int halfWaveLength = WAVE_RADIUS / 2;//半径
         mPath.moveTo(-WAVE_RADIUS + mDeltaX, orginY);
@@ -78,13 +80,18 @@ public class WaveView extends View {
             mPath.rQuadTo(halfWaveLength / 2, 60, halfWaveLength, 0);
             mPath.rQuadTo(halfWaveLength / 2, -60, halfWaveLength, 0);
         }
+
+        mBoatPath.set(mPath);
+
+//        mBoatPath.moveTo(-WAVE_RADIUS+mDeltaX, orginY);//截取从 -WAVE_RADIUS + mDeltaX -getWidth的路径
+
         mPath.lineTo(getWidth(), getHeight());
         mPath.lineTo(0, getHeight());
         mPath.close();
         canvas.drawPath(mPath, mWavePaint);
 
-        mPathMeasure = new PathMeasure(mPath, false);
-        float length = mPathMeasure.getLength();
+        mPathMeasure = new PathMeasure(mBoatPath, false);
+        float length = mPathMeasure.getLength()/2;
         mMatrix.reset();
         boolean posTan = mPathMeasure.getPosTan(length * faction, pos, tan);
         Log.d("tag", "length = " + length);
@@ -93,9 +100,10 @@ public class WaveView extends View {
         Log.d("tag", "posTan = " + posTan);
         if (posTan) {
             mPathMeasure.getMatrix(length * faction, mMatrix, PathMeasure.TANGENT_MATRIX_FLAG | PathMeasure.POSITION_MATRIX_FLAG);
-            mMatrix.preTranslate(-mBoatBitmap.getWidth() / 2, -mBoatBitmap.getHeight()+5);
+            mMatrix.preTranslate(-mBoatBitmap.getWidth() / 2, -mBoatBitmap.getHeight()+6);
             canvas.drawBitmap(mBoatBitmap, mMatrix, mWavePaint);
         }
+        invalidate();
     }
 
     /**
@@ -110,10 +118,9 @@ public class WaveView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mDeltaX = (int) animation.getAnimatedValue();
-                postInvalidate();
             }
         });
-//        animator1.start();
+        animator1.start();
         ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
         animator.setDuration(5000);
         animator.setInterpolator(new LinearInterpolator());
@@ -122,7 +129,6 @@ public class WaveView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 faction = (float) animation.getAnimatedValue();
-                postInvalidate();
             }
         });
         animator.start();
