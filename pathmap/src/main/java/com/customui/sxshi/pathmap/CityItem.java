@@ -7,7 +7,8 @@ import android.graphics.Path;
 import android.graphics.Region;
 
 /**
- * Created by sxshi on 2017/6/1.
+ * @auther sxshi on 2017/6/1.
+ * @email emotiona_xiaoshi@126.com
  */
 
 public class CityItem {
@@ -79,9 +80,8 @@ public class CityItem {
             paint.setStyle(Paint.Style.FILL);
             paint.setShadowLayer(8, 0, 0, 0xFFFFFFFF);
             canvas.drawPath(mPath, paint);
-
             paint.clearShadowLayer();
-            paint.setColor(drawColor);
+            paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);
             paint.setStrokeWidth(2);
             canvas.drawPath(mPath, paint);
@@ -91,7 +91,6 @@ public class CityItem {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(drawColor);
             canvas.drawPath(mPath, paint);
-
             paint.setStyle(Paint.Style.STROKE);
             int strokeColor = 0xFFD0E8F4;
             paint.setColor(strokeColor);
@@ -102,7 +101,7 @@ public class CityItem {
     /**
      * 当前地图是否是在点击区域
      *
-     * @return
+     * @return ture 当前点在Path内，fasle不在当前Path区域内
      */
     public boolean isOnTouch(int x, int y) {
         return mRegion.contains(x, y);

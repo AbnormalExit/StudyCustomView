@@ -29,22 +29,31 @@ import java.util.List;
  * province map info
  */
 
-public class DetialMapView extends View {
+public class CityMapView extends View {
+    private static final String TAG = "DetialMapView";
     private Paint mPaint;
-    private List<CityItem> cityItemList;
+    private List<CityItem> cityItemList ;
     private CityItem selectCity;
     private Context mContext;
     private float scale = 1.3f;
-    private Handler mHander;
+    private static Handler mHander;
+
+    private int miniWidth;
+    private int miniHeight;
     private static final int LOAD_FINISH = 1;
 
     private GestureDetectorCompat gestureDetectorCompat;
+    private OnMapClickListener onMapClickListener;
 
-    public DetialMapView(Context context) {
+    public void setOnMapClickListener(OnMapClickListener onMapClickListener) {
+        this.onMapClickListener = onMapClickListener;
+    }
+
+    public CityMapView(Context context) {
         this(context, null);
     }
 
-    public DetialMapView(Context context, @Nullable AttributeSet attrs) {
+    public CityMapView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mContext = context.getApplicationContext();
         init();
@@ -67,7 +76,9 @@ public class DetialMapView extends View {
         mPaint.setAntiAlias(true);
         mPaint.setStrokeWidth(2f);
 
-
+        miniWidth = getContext().getResources().getDimensionPixelSize(R.dimen.map_min_width);
+        miniHeight = getContext().getResources().getDimensionPixelSize(R.dimen.map_min_height);
+        Log.d(TAG, "miniWidth=" + miniWidth + "|miniHeight=" + miniHeight);
         cityItemList = new ArrayList<>();
         mHander = new Handler() {
             @Override
@@ -103,13 +114,14 @@ public class DetialMapView extends View {
         CityItem cityItem = null;
         if (list == null) return false;
         for (CityItem temp : list) {
-            if (temp.isOnTouch(x, y)) {
+            if (temp.isOnTouch((int) (x / scale), (int) (y / scale))) {//除以放大倍数
                 cityItem = temp;
                 break;
             }
         }
         if (cityItem != null && !cityItem.equals(selectCity)) {
             selectCity = cityItem;
+            onMapClickListener.onClick(selectCity);
             postInvalidate();
         }
         return selectCity != null;
@@ -128,12 +140,43 @@ public class DetialMapView extends View {
         if (selectCity != null) {
             selectCity.onDraw(canvas, mPaint, true);
         }
-        canvas.restore();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return gestureDetectorCompat.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = getMeasure(miniWidth, widthMeasureSpec);
+        int height = getMeasure(miniHeight, heightMeasureSpec);
+        Log.d(TAG, "onMeasure: " + width + "---" + height);
+        setMeasuredDimension(width, height);
+    }
+
+    public int getMeasure(int defaultSize, int measureSpec) {
+        int resultSize = 0;
+        int mode = MeasureSpec.getMode(measureSpec);
+        int size = MeasureSpec.getSize(measureSpec);
+        switch (mode) {
+            case MeasureSpec.EXACTLY: //自己定义大小
+                resultSize = size;
+                break;
+            case MeasureSpec.AT_MOST: //wrap_content
+            case MeasureSpec.UNSPECIFIED:
+                resultSize = Math.max(defaultSize, size);
+                break;
+        }
+        return resultSize;
+    }
+
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        Log.d(TAG, "onSizeChanged: " + w + "---" + h);
+        postInvalidate();
+        super.onSizeChanged(w, h, oldw, oldh);
     }
 
     /**
@@ -144,11 +187,10 @@ public class DetialMapView extends View {
             @Override
             public void run() {
                 try {
-                    List<CityItem> result = new ArrayList<CityItem>();
+                    List<CityItem> result = new ArrayList<>();
                     long startTime = System.currentTimeMillis();
-                    InputStream inputStream = mContext.getResources().openRawResource(R.raw.taiwanhigh);
-                    XmlPullParser parser = XmlPullParserFactory.newInstance()
-                            .newPullParser();
+                    InputStream inputStream = mContext.getResources().openRawResource(R.raw.china);
+                    XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
                     parser.setInput(inputStream, "utf-8");
                     int eventType;
                     while ((eventType = parser.getEventType()) != XmlPullParser.END_DOCUMENT) {
@@ -189,4 +231,10 @@ public class DetialMapView extends View {
         }.start();
     }
 
+    /**
+     * 点击监听事件 回调得到城市信息
+     */
+     interface OnMapClickListener {
+        void onClick(CityItem cityItem);
+    }
 }
