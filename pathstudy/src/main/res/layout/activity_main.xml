@@ -9,15 +9,17 @@
     android:background="@android:color/darker_gray"
     tools:context="com.customui.sxshi.pathstudy.MainActivity">
 
-    <com.customui.sxshi.pathstudy.view.RadarView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        />
+    <!--<com.customui.sxshi.pathstudy.view.RadarView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="gone"-->
+        <!--/>-->
 
-    <com.customui.sxshi.pathstudy.view.BaguaView
+    <!--<com.customui.sxshi.pathstudy.view.BaguaView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="20dp" />-->
+    <com.customui.sxshi.pathstudy.view.SearchView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
-
+        android:layout_height="wrap_content" />
 </LinearLayout>

@@ -1,1 +1,1 @@
-include ':waveView', ':pathstudy'
+include ':waveView', ':pathstudy', ':pathmap'
